@@ -1,0 +1,20 @@
+# pyrender requirements:
+freetype-py
+imageio
+imgui
+networkx
+numpy
+Pillow
+pyglet==1.4.0a1
+PyOpenGL
+PyOpenGL_accelerate
+six
+trimesh==3.9.35
+sphinx
+sphinx_rtd_theme
+sphinx-automodapi
+# experiment requirements:
+scikit-learn
+scikit-image
+torch
+tqdm
