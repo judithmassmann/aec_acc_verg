@@ -54,25 +54,25 @@ def save_decoded_image(original, reconstruction, name, texture_dist=None, camera
         ['original_left', 'original_stereo', 'original_right'],
         ['reconstruction_left', 'reconstruction_stereo', 'reconstruction_right']
     ], figsize=(10,10), constrained_layout=True)
-    ax['original_left'].imshow(original[0,:,:], 
+    ax['original_left'].imshow(original[0, :, :],
                                cmap='gray', vmin=-1, vmax=1)
     ax['original_left'].set_title('original left')
     ax['original_left'].axis('off')
     ax['original_stereo'].imshow(original_stereo)
     ax['original_stereo'].set_title('stereo')
     ax['original_stereo'].axis('off')
-    ax['original_right'].imshow(original[1,:,:], 
+    ax['original_right'].imshow(original[1, :, :],
                                 cmap='gray', vmin=-1, vmax=1)
     ax['original_right'].set_title('original right')
     ax['original_right'].axis('off')
-    ax['reconstruction_left'].imshow(reconstruction[0,:,:], 
+    ax['reconstruction_left'].imshow(reconstruction[0, :, :],
                                      cmap='gray', vmin=-1, vmax=1)
     ax['reconstruction_left'].set_title('reconstruction left')
     ax['reconstruction_left'].axis('off')
     ax['reconstruction_stereo'].imshow(reconstruction_stereo)
     ax['reconstruction_stereo'].set_title('stereo')
     ax['reconstruction_stereo'].axis('off')
-    ax['reconstruction_right'].imshow(reconstruction[1,:,:], 
+    ax['reconstruction_right'].imshow(reconstruction[1, :, :],
                                       cmap='gray', vmin=-1, vmax=1)
     ax['reconstruction_right'].set_title('reconstruction right')
     ax['reconstruction_right'].axis('off')

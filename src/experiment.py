@@ -14,7 +14,7 @@ from sklearn.metrics import mean_squared_error
 import os
 import sys
 file_path = os.path.abspath(os.path.dirname(__file__))
-main_path = os.path.abspath(os.path.join(file_path,'..'))
+main_path = os.path.abspath(os.path.join(file_path, '..'))
 if main_path != sys.path[0]:
     sys.path.insert(0, main_path)
     os.chdir(main_path)
@@ -35,7 +35,7 @@ def main():
     n_episodes_per_epoch = 1
     n_timesteps = 10
     encoding_dims = 16*7*7
-    ae_sparse_lambda = 0 #1e-3
+    ae_sparse_lambda = 0  # 1e-3
     ae_learning_rate = 1e-3
     reward_c = 1 # reward = reward_c * (Lt - Lt+1)
     min_texture_dist = 50   # cm

@@ -2,7 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import mean_squared_error
 
-import os, sys
+import os
+import sys
 file_path = os.path.abspath(os.path.dirname(__file__))
 main_path = os.path.abspath(os.path.join(file_path,'..'))
 if main_path != sys.path[0]:

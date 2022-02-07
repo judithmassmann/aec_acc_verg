@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 import trimesh
 import time
 
-import os, sys
+import os
+import sys
 file_path = os.path.abspath(os.path.dirname(__file__))
 main_path = os.path.abspath(os.path.join(file_path,'..'))
 if main_path != sys.path[0]:

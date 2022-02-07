@@ -14,6 +14,7 @@ def get_device():
         device = 'cpu'
     return device
 
+
 # make the `images` directory
 def make_dir():
     image_dir = './results/images'
@@ -25,15 +26,18 @@ def make_dir():
         os.makedirs(model_dir)
     if not os.path.exists(score_dir):
         os.makedirs(score_dir)
-        
+
+
 def img_to_obs(img_left, img_right):
-    observation = np.zeros([2,32,32])
-    observation[0,:,:] = img_left
-    observation[1,:,:] = img_right
+    observation = np.zeros([2, 32, 32])
+    observation[0, :, :] = img_left
+    observation[1, :, :] = img_right
     return observation
 
-def dist_to_angle(Edit, eye_dist_to_center=3.4):
+
+def dist_to_angle(texture_dist, eye_dist_to_center=3.4):
     return atan(eye_dist_to_center/texture_dist)*180/pi
+
 
 def get_cropped_image(img):
     fine, coarse = 128, 256
@@ -47,8 +51,8 @@ def get_cropped_image(img):
     area_coarse = (width/2-(coarse/2-1), height/2-(coarse/2-1), width/2+(coarse/2+1), height/2+(coarse/2+1))
     crop_img_fine = pil_bw.crop(area_fine)
     resize_img_fine = crop_img_fine.resize([resize_scale, resize_scale])
-    img_fine = minmax_scale(resize_img_fine, feature_range=(-1,1))
+    img_fine = minmax_scale(resize_img_fine, feature_range=(-1, 1))
     crop_img_coarse = pil_bw.crop(area_coarse)
     resize_img_coarse = crop_img_coarse.resize([resize_scale, resize_scale])
-    img_coarse = minmax_scale(resize_img_coarse, feature_range=(-1,1))
+    img_coarse = minmax_scale(resize_img_coarse, feature_range=(-1, 1))
     return img_fine, img_coarse
