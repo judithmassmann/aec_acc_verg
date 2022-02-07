@@ -90,12 +90,13 @@ def main():
         autoencoder_params = global_agent.autoencoder.state_dict()
         actor_critic_params = global_agent.actor_critic.state_dict()
         if n_processes == 1:
-            embodiment = Embodiment(name=0,
-                                    textures=texture_files,
-                                    autoencoder_params=autoencoder_params,
-                                    actor_critic_params=actor_critic_params,
-                                    n_episodes=n_episodes_per_epoch,
-                                    )
+            embodiment = Embodiment(
+                name=0,
+                textures=texture_files,
+                autoencoder_params=autoencoder_params,
+                actor_critic_params=actor_critic_params,
+                n_episodes=n_episodes_per_epoch,
+            )
             process_buffer, score = embodiment.run()
             train_ac_epoch_loss = global_agent.train_actor_critic(process_buffer, epoch=epoch)
             train_ac_loss.append(train_ac_epoch_loss)
