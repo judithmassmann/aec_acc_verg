@@ -27,8 +27,9 @@ def run_embodiment(name, textures, autoencoder_params, actor_critic_params, n_ep
 
 
 class Embodiment():
-    def __init__(self,name,textures,autoencoder_params=None, actor_critic_params=None,epsilon=1.0,n_actions=9,n_episodes=5,n_timesteps=10,):
-        super(Embodiment,self).__init__()
+    def __init__(self, name, textures, autoencoder_params=None, actor_critic_params=None, epsilon=1.0,
+                 n_actions=9, n_episodes=5, n_timesteps=10):
+        super(Embodiment, self).__init__()
 
         self.name = 'proc-%02d' % name
         self.environment = Environment()
@@ -45,8 +46,7 @@ class Embodiment():
         self.reward_c = 1
         self.min_texture_dist = 50
         self.max_texture_dist = 500
-        
-    
+
     def run(self, print_time=False):
         
         score = 0
@@ -56,9 +56,9 @@ class Embodiment():
             start = time.time()
             running_reward = 0
             
-            texture_file = self.textures[episode_idx%len(self.textures)]
-            texture_dist = self.min_texture_dist + (self.max_texture_dist-self.min_texture_dist)*np.random.random()
-            initial_camera_angle = dist_to_angle(texture_dist) - 1 + 2*np.random.random()
+            texture_file = self.textures[episode_idx % len(self.textures)]
+            texture_dist = self.min_texture_dist + (self.max_texture_dist-self.min_texture_dist)*1  # Edit verg *np.random.random()
+            initial_camera_angle = dist_to_angle(texture_dist)  # Edit verg  (...)- 1 + 2*np.random.random()
             self.environment.reset_camera(initial_camera_angle)
             self.environment.new_episode(texture_dist=texture_dist, texture_file=texture_file)
 
@@ -71,8 +71,7 @@ class Embodiment():
                 encoding_fine, reconstruction_loss_fine = self.agent.get_encoding(observation_fine)
                 encoding_coarse, reconstruction_loss_coarse = self.agent.get_encoding(observation_coarse)
                 action = self.agent.choose_action(encoding_fine, encoding_coarse)
-                correct_verg_angle = dist_to_angle(500)  # Edit verg
-                self.environment.perform_action(correct_verg_angle)  # Edit verg (action)
+                #self.environment.perform_action(action)  # Edit verg
 
                 img_left_fine, img_left_coarse, img_right_fine, img_right_coarse = self.environment.get_observations()
                 new_observation_fine = img_to_obs(img_left_fine, img_right_fine)

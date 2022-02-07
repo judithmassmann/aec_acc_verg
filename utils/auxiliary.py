@@ -32,7 +32,7 @@ def img_to_obs(img_left, img_right):
     observation[1,:,:] = img_right
     return observation
 
-def dist_to_angle(texture_dist, eye_dist_to_center=3.4):
+def dist_to_angle(Edit, eye_dist_to_center=3.4):
     return atan(eye_dist_to_center/texture_dist)*180/pi
 
 def get_cropped_image(img):

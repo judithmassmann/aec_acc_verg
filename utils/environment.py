@@ -17,8 +17,8 @@ from utils.plots import plot_observations
 
 class Environment():
     
-    def __init__(self, action_to_angle=None, min_texture_dist=50, max_texture_dist=500, 
-                    min_camera_angle=0, max_camera_angle=4):
+    def __init__(self, action_to_angle=None, min_texture_dist=50, max_texture_dist=500,
+                 min_camera_angle=0, max_camera_angle=4):
         self.framework = Framework(width=256, height=256, fov=0.25)
         self.min_texture_dist = min_texture_dist
         self.max_texture_dist = max_texture_dist
@@ -37,17 +37,16 @@ class Environment():
 
     def new_episode(self, texture_dist=None, texture_file=None):
         if texture_dist is None:
-            texture_dist = self.min_texture_dist + (self.max_texture_dist-self.min_texture_dist)*1  # Edit verg  *np.random.random()
+            texture_dist = self.min_texture_dist + (self.max_texture_dist-self.min_texture_dist)*np.random.random()
         if self.framework.texture_node:
             self.framework.remove_texture()
         if texture_file:
             self.framework.change_texture(texture_file)
         self.framework.add_texture(texture_dist)
 
-    def perform_action(self, angle):  # Edit verg (self, action)
-        #angle = self.action_to_angle[action]  # Edit verg
-        print(angle)
-        self.framework.move_camera(angle, 
+    def perform_action(self, action):
+        angle = self.action_to_angle[action]
+        self.framework.move_camera(angle,
                                     min_camera_angle=self.min_camera_angle,
                                     max_camera_angle=self.max_camera_angle)
 
@@ -55,6 +54,7 @@ class Environment():
         img_left, img_right = self.framework.render_scene()
         img_left_fine, img_left_coarse = get_cropped_image(img_left)
         img_right_fine, img_right_coarse = get_cropped_image(img_right)
+        #plot_observations(img_left_coarse, img_right_coarse)  # Edit verg plotten lassen
         return img_left_fine, img_left_coarse, img_right_fine, img_right_coarse
 
 #class EnvironmentPool():
@@ -68,11 +68,11 @@ if __name__ == '__main__':
     _, img_left_coarse, _, img_right_coarse = environment.get_observations()
     mse = mean_squared_error(img_left_coarse, img_right_coarse)
     plot_observations(img_left_coarse, img_right_coarse, texture_dist=texture_dist,
-                camera_angle=environment.framework.camera_angle, mse=mse)
+                      camera_angle=environment.framework.camera_angle, mse=mse)
 
     camera_angle = dist_to_angle(texture_dist=texture_dist)
     environment.framework.move_camera(camera_angle+1)
     _, img_left_coarse, _, img_right_coarse = environment.get_observations()
     mse = mean_squared_error(img_left_coarse, img_right_coarse)
     plot_observations(img_left_coarse, img_right_coarse, texture_dist=texture_dist,
-                    camera_angle=environment.framework.camera_angle, mse=mse)
+                      camera_angle=environment.framework.camera_angle, mse=mse)

@@ -91,9 +91,9 @@ class Framework():
 
     def move_camera(self, angle, min_camera_angle=-1, max_camera_angle=5):
         new_camera_angle = self.camera_angle + angle
-        if (new_camera_angle < min_camera_angle):
+        if new_camera_angle < min_camera_angle:
             new_camera_angle = min_camera_angle
-        if (new_camera_angle > max_camera_angle):
+        if new_camera_angle > max_camera_angle:
             new_camera_angle = max_camera_angle
         self.camera_angle = new_camera_angle
         self.camera_transform[0].rotate( angle, 0, 0)

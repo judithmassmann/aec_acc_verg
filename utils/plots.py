@@ -27,9 +27,9 @@ def plot_observations(img_left, img_right, texture_dist=None, camera_angle=None,
     ax['original_right'].set_title('right')
     ax['original_right'].axis('off')
     
-    fig.suptitle('Distance: %.1f  MSE: %.2e \nAngle: %.2e  Expected angle: %.2e' % (
-                                texture_dist, mse, camera_angle,
-                                dist_to_angle(texture_dist)))
+    #fig.suptitle('Distance: %.1f  MSE: %.2e \nAngle: %.2e  Expected angle: %.2e' % (
+    #                            texture_dist, mse, camera_angle,
+    #                            dist_to_angle(texture_dist)))
     plt.show()
     plt.close()
 
@@ -76,7 +76,6 @@ def save_decoded_image(original, reconstruction, name, texture_dist=None, camera
                                       cmap='gray', vmin=-1, vmax=1)
     ax['reconstruction_right'].set_title('reconstruction right')
     ax['reconstruction_right'].axis('off')
-    print(texture_dist, camera_angle, mse)
     if texture_dist and camera_angle and mse:
         fig.suptitle('Distance: %.1f  MSE: %.2e \nAngle: %.2e  Expected angle: %.2e' % (
                                 texture_dist, mse, camera_angle, dist_to_angle(texture_dist)))

@@ -112,11 +112,11 @@ def main():
 
                 for idx in range(n_processes):
                     processes.append(executor.submit(run_embodiment,
-                                                    names[idx],
-                                                    texture_files,
-                                                    autoencoder_params,
-                                                    actor_critic_params,
-                                                    n_episodes_per_epoch))
+                                                     names[idx],
+                                                     texture_files,
+                                                     autoencoder_params,
+                                                     actor_critic_params,
+                                                     n_episodes_per_epoch))
 
                 for process in concurrent.futures.as_completed(processes):
                     process_buffer, score = process.result()
@@ -132,7 +132,7 @@ def main():
         train_ae_loss.append(train_ae_epoch_loss)
 
         # Outputs:
-        if epoch <= 100 and epoch % 10 == 0 or epoch <= 1000 and epoch%100 == 0 or epoch % 1000 == 0:
+        if epoch <= 100 and epoch % 10 == 0 or epoch <= 1000 and epoch % 100 == 0 or epoch % 1000 == 0:
             plot_ae_loss(train_ae_loss)
             plot_ac_loss(train_ac_loss)
             plot_rewards(scores)
