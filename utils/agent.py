@@ -91,12 +91,12 @@ class Agent():
         loss.backward()
         self.ae_optimizer.step()
 
-#        if epoch <= 100 or (epoch+1)%100 == 0:
-#            save_decoded_image(observations_coarse[-1, :, :, :].detach().numpy(),
-#                               reconstructions_coarse[-1, :, :, :].detach().numpy(),
-#                               f"./results/images/{epoch}.png", 500)
+        if epoch <= 100 or (epoch+1) % 100 == 0:
+            save_decoded_image(observations_coarse[-1, :, :, :].detach().numpy(),
+                               reconstructions_coarse[-1, :, :, :].detach().numpy(),
+                               f"./results/images/{epoch}.png")
         epoch_loss = loss.item()
-        return epoch_loss, observations_coarse, reconstructions_coarse  # Edit verg nur ersteres
+        return epoch_loss
 
     def train_actor_critic(self, buffer, epoch):
                   

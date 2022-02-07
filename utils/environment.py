@@ -46,6 +46,7 @@ class Environment():
 
     def perform_action(self, angle):  # Edit verg (self, action)
         #angle = self.action_to_angle[action]  # Edit verg
+        print(angle)
         self.framework.move_camera(angle, 
                                     min_camera_angle=self.min_camera_angle,
                                     max_camera_angle=self.max_camera_angle)

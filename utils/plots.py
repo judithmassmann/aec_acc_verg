@@ -36,18 +36,18 @@ def plot_observations(img_left, img_right, texture_dist=None, camera_angle=None,
 
 # for saving the original and reconstructed images
 def save_decoded_image(original, reconstruction, name, texture_dist=None, camera_angle=None, mse=None):
-    img_left, img_right = original[0,:,:], original[1,:,:]
-    img_left_3d = np.reshape(img_left, img_left.shape + (1,))
-    img_right_3d = np.reshape(img_right, img_right.shape + (1,))
+    img_left, img_right = original[0, :, :], original[1, :, :]
+    img_left_3d = np.reshape(img_left, img_left.shape + (1, ))
+    img_right_3d = np.reshape(img_right, img_right.shape + (1, ))
     img_center_3d = (img_left_3d + img_right_3d) / 2.0
-    img_stereo = np.concatenate((img_left_3d,img_center_3d,img_right_3d), axis=2)
+    img_stereo = np.concatenate((img_left_3d, img_center_3d, img_right_3d), axis=2)
     original_stereo = (img_stereo+1)/2
 
-    img_left, img_right = reconstruction[0,:,:], reconstruction[1,:,:]
-    img_left_3d = np.reshape(img_left, img_left.shape + (1,))
-    img_right_3d = np.reshape(img_right, img_right.shape + (1,))
+    img_left, img_right = reconstruction[0, :, :], reconstruction[1, :, :]
+    img_left_3d = np.reshape(img_left, img_left.shape + (1, ))
+    img_right_3d = np.reshape(img_right, img_right.shape + (1, ))
     img_center_3d = (img_left_3d + img_right_3d) / 2.0
-    img_stereo = np.concatenate((img_left_3d,img_center_3d,img_right_3d), axis=2)
+    img_stereo = np.concatenate((img_left_3d, img_center_3d, img_right_3d), axis=2)
     reconstruction_stereo = (img_stereo+1)/2
 
     fig, ax = plt.subplot_mosaic([
@@ -76,7 +76,7 @@ def save_decoded_image(original, reconstruction, name, texture_dist=None, camera
                                       cmap='gray', vmin=-1, vmax=1)
     ax['reconstruction_right'].set_title('reconstruction right')
     ax['reconstruction_right'].axis('off')
-    print(texture_dist,camera_angle,mse)
+    print(texture_dist, camera_angle, mse)
     if texture_dist and camera_angle and mse:
         fig.suptitle('Distance: %.1f  MSE: %.2e \nAngle: %.2e  Expected angle: %.2e' % (
                                 texture_dist, mse, camera_angle, dist_to_angle(texture_dist)))
@@ -102,7 +102,7 @@ def plot_ac_loss(loss):
     plt.ylabel('ActorCritic loss')
     plt.title('Reinforcement learner')
     plt.savefig('./results/ac_loss.png')
-    plt.close()    
+    plt.close()
 
 
 def plot_rewards(scores):

@@ -102,7 +102,7 @@ class Embodiment():
                 running_reward += reward
                 self.buffer.store(observation_fine, observation_coarse, new_observation_fine, new_observation_coarse, 
                                   encoding_fine, encoding_coarse, new_encoding_fine, new_encoding_coarse,
-                                  action,reward)
+                                  action, reward)
                 
                 observation_fine = new_observation_fine
                 observation_coarse = new_observation_coarse
