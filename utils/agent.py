@@ -13,12 +13,12 @@ from utils.auxiliary import get_device
 
 class Agent():
     def __init__(self, img_size=32, n_actions=9,
-                ae_learning_rate=1e-3, ae_sparse_lambda=0,
-                gamma=0.6, encoding_dims=512,
-                learning_rate=1e-3, weight_decay=5e-06,
-                minibatch_size=40, batch_size=200, buffer_size=1000,
-                epsilon=0.01, epsilon_min=0.01, epsilon_dec=1e-3
-    ):
+                 ae_learning_rate=1e-3, ae_sparse_lambda=0,
+                 gamma=0.6, encoding_dims=512,
+                 learning_rate=1e-3, weight_decay=5e-06,
+                 minibatch_size=40, batch_size=200, buffer_size=1000,
+                 epsilon=0.01, epsilon_min=0.01, epsilon_dec=1e-3
+                 ):
         self.device = get_device()
         # autoencoder
         self.autoencoder = Autoencoder().float()
@@ -53,7 +53,6 @@ class Agent():
         encoding = torch.reshape(encoding, (16, 7, 7))
         loss = self.ae_criterion(reconstruction, observation).item()
         return encoding, loss
-
 
     def choose_action(self, encoding_fine, encoding_coarse):
         if np.random.random() > self.epsilon:

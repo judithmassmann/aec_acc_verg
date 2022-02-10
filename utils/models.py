@@ -95,7 +95,9 @@ def sparse_loss(encoding):
     loss = torch.mean(torch.abs(encoding))
     return loss
 
+
 # --- Actor Critic ---
+
 
 class ActorCritic(nn.Module):
     def __init__(self, n_actions):

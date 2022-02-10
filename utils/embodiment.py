@@ -4,11 +4,13 @@ import torch
 import numpy as np
 from sklearn.metrics import mean_squared_error
 from multiprocessing import Pool
-from utils.auxiliary import dist_to_angle
+from scipy import ndimage
+import matplotlib.pyplot as plt
 
-import os, sys
+import os
+import sys
 file_path = os.path.abspath(os.path.dirname(__file__))
-main_path = os.path.abspath(os.path.join(file_path,'..'))
+main_path = os.path.abspath(os.path.join(file_path, '..'))
 if main_path != sys.path[0]:
     sys.path.insert(0, main_path)
     os.chdir(main_path)
@@ -17,7 +19,7 @@ if main_path != sys.path[0]:
 from utils.agent import Agent
 from utils.environment import Environment
 from utils.buffer import Buffer
-from utils.auxiliary import img_to_obs, dist_to_angle
+from utils.auxiliary import img_to_obs, dist_to_angle, add_gaussian_blur, filt2D
 
 
 def run_embodiment(name, textures, autoencoder_params, actor_critic_params, n_episodes):
@@ -57,49 +59,80 @@ class Embodiment():
             running_reward = 0
             
             texture_file = self.textures[episode_idx % len(self.textures)]
-            texture_dist = self.min_texture_dist + (self.max_texture_dist-self.min_texture_dist)*1  # Edit verg *np.random.random()
-            initial_camera_angle = dist_to_angle(texture_dist)  # Edit verg  (...)- 1 + 2*np.random.random()
+            texture_dist = self.min_texture_dist + (self.max_texture_dist-self.min_texture_dist)*1  # Edit verg off *np.random.random()
+            initial_camera_angle = dist_to_angle(texture_dist)  # Edit verg off (...)- 1 + 2*np.random.random()
             self.environment.reset_camera(initial_camera_angle)
             self.environment.new_episode(texture_dist=texture_dist, texture_file=texture_file)
 
             img_left_fine, img_left_coarse, img_right_fine, img_right_coarse = self.environment.get_observations()
+
+            blur = 1#np.random.random()  # Edit gaussian blur
+            img_left_fine, img_left_coarse = add_gaussian_blur(
+                img_left_fine, img_left_coarse, blur)  # Edit gaussian blur
+            img_right_fine, img_right_coarse = add_gaussian_blur(
+                img_right_fine, img_right_coarse, blur)  # Edit gaussian blur
+
             observation_fine = img_to_obs(img_left_fine, img_right_fine)
             observation_coarse = img_to_obs(img_left_coarse, img_right_coarse)
             
             for _ in range(self.n_timesteps):
-                
                 encoding_fine, reconstruction_loss_fine = self.agent.get_encoding(observation_fine)
                 encoding_coarse, reconstruction_loss_coarse = self.agent.get_encoding(observation_coarse)
                 action = self.agent.choose_action(encoding_fine, encoding_coarse)
-                #self.environment.perform_action(action)  # Edit verg
+                #self.environment.perform_action_angle(action)  # Edit verg off
 
                 img_left_fine, img_left_coarse, img_right_fine, img_right_coarse = self.environment.get_observations()
-                new_observation_fine = img_to_obs(img_left_fine, img_right_fine)
-                new_observation_coarse = img_to_obs(img_left_coarse, img_right_coarse)
+
+                new_img_left_fine, new_img_left_coarse, new_img_right_fine, new_img_right_coarse = self.environment.perform_action_blur(
+                    img_left_fine, img_left_coarse, img_right_fine, img_right_coarse, action)  # Edit action gaussian blur
+                new_observation_fine = img_to_obs(new_img_left_fine, new_img_right_fine)
+                new_observation_coarse = img_to_obs(new_img_left_coarse, new_img_right_coarse)
                 new_encoding_fine, new_reconstruction_loss_fine = self.agent.get_encoding(new_observation_fine)
                 new_encoding_coarse, new_reconstruction_loss_coarse = self.agent.get_encoding(new_observation_coarse)
 
-                # Reward as improvement in reconstruction loss:
+                if _ == 0:
+                    plt.imshow(img_left_fine, cmap='gray', vmin=-1, vmax=1)
+                    plt.show()
+                    plt.imshow(new_img_left_fine, cmap='gray', vmin=-1, vmax=1)
+                    plt.show()
+
+                # Reward as improvement in reconstruction
+                # :
                 #reward = self.reward_c * (reconstruction_loss_fine + reconstruction_loss_coarse - (
                 #                     new_reconstruction_loss_fine + new_reconstruction_loss_coarse))
                 
                 # Reward as reconstruction loss:
                 #reward = - self.reward_c * (new_reconstruction_loss_fine + new_reconstruction_loss_coarse)
+# Edit gaussian blur, old reward for vergence:
+#                # Reward as improvement in MSE:
+#                mse_fine = mean_squared_error(observation_fine[0, :, :], observation_fine[1, :, :])
+#                mse_coarse = mean_squared_error(observation_coarse[0, :, :], observation_coarse[1, :, :])
+#                mse = (mse_
+                #
+                #                fine+mse_coarse)/2
+#                new_mse_fine = mean_squared_error(new_observation_fine[0, :, :], new_observation_fine[1, :, :])
+#                new_mse_coarse = mean_squared_error(new_observation_coarse[0, :, :], new_observation_coarse[1, :, :])
+#                new_mse = (new_mse_fine+new_mse_coarse)/2
+#                #reward = mse - new_mse
+#
+#                # Reward as MSE:
+#                reward = - new_mse
 
-                # Reward as improvement in MSE:
-                mse_fine = mean_squared_error(observation_fine[0, :, :], observation_fine[1, :, :])
-                mse_coarse = mean_squared_error(observation_coarse[0, :, :], observation_coarse[1, :, :])
-                mse = (mse_fine+mse_coarse)/2
-                new_mse_fine = mean_squared_error(new_observation_fine[0, :, :], new_observation_fine[1, :, :])
-                new_mse_coarse = mean_squared_error(new_observation_coarse[0, :, :], new_observation_coarse[1, :, :])
-                new_mse = (new_mse_fine+new_mse_coarse)/2
-                #reward = mse - new_mse
+                # Edit gaussian blur new reward see eckmann et al.:
 
-                # Reward as MSE:
-                reward = - new_mse
+                im_l_f = np.fft.fft2(observation_fine[0, :, :])
+                im_r_f = np.fft.fft2(observation_fine[1, :, :])
+                im_l_c = np.fft.fft2(observation_coarse[0, :, :])
+                im_r_c = np.fft.fft2(observation_coarse[1, :, :])
+                imagew_l_f = np.real(np.fft.ifft2(np.multiply(im_l_f, np.fft.fftshift(filt2D()))))
+                imagew_r_f = np.real(np.fft.ifft2(np.multiply(im_r_f, np.fft.fftshift(filt2D()))))
+                imagew_l_c = np.real(np.fft.ifft2(np.multiply(im_l_c, np.fft.fftshift(filt2D()))))
+                imagew_r_c = np.real(np.fft.ifft2(np.multiply(im_r_c, np.fft.fftshift(filt2D()))))
+                reward = np.mean([np.mean(imagew_l_f), np.mean(imagew_r_f), np.mean(imagew_l_c), np.mean(imagew_r_c)])
+                #print(reward)  # Edit gaussian blur
 
                 running_reward += reward
-                self.buffer.store(observation_fine, observation_coarse, new_observation_fine, new_observation_coarse, 
+                self.buffer.store(observation_fine, observation_coarse, new_observation_fine, new_observation_coarse,
                                   encoding_fine, encoding_coarse, new_encoding_fine, new_encoding_coarse,
                                   action, reward)
                 
@@ -113,6 +146,7 @@ class Embodiment():
             #        '– AE loss: %.2e, Score: %.2e' % (new_reconstruction_loss_coarse, running_reward/self.n_timesteps))
 
         return self.buffer, score / self.n_episodes
+
 
 if __name__ == '__main__':
     

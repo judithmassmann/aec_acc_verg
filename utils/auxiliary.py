@@ -4,6 +4,7 @@ import torch
 from math import atan, pi
 from PIL import Image
 from sklearn.preprocessing import minmax_scale
+from scipy import ndimage
 
 
 # get the computation device
@@ -43,9 +44,7 @@ def get_cropped_image(img):
     fine, coarse = 128, 256
     resize_scale = 32
     pil_img = Image.fromarray(img)
-    pil_bw = pil_img.convert('L')
-    #plt.imshow(pil_bw)
-    #plt.show()  # Show complete image
+    pil_bw = pil_img.convert('L')  # greyscale
     width, height = pil_bw.size
     area_fine = (width/2-(fine/2-1), height/2-(fine/2-1), width/2+(fine/2+1), height/2+(fine/2+1))
     area_coarse = (width/2-(coarse/2-1), height/2-(coarse/2-1), width/2+(coarse/2+1), height/2+(coarse/2+1))
@@ -56,3 +55,20 @@ def get_cropped_image(img):
     resize_img_coarse = crop_img_coarse.resize([resize_scale, resize_scale])
     img_coarse = minmax_scale(resize_img_coarse, feature_range=(-1, 1))
     return img_fine, img_coarse
+
+
+def add_gaussian_blur(img_left, img_right, blur):  # Edit gaussian blur whitening factor
+    img_left = ndimage.gaussian_filter(img_left, blur)
+    img_right = ndimage.gaussian_filter(img_right, blur)
+    return img_left, img_right
+
+
+def filt2D():
+    window_size = 32
+    nx = np.linspace(-window_size / 2, window_size / 2, 32)
+    fx, fy = np.meshgrid(nx, nx)
+    rho = np.sqrt(fx * fx + fy * fy)
+    f_0 = 0.4 * window_size
+    phi = 4
+    a = 1.24
+    return (rho ** a) * np.exp(-(rho / f_0) ** phi)

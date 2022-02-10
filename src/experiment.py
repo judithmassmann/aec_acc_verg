@@ -30,14 +30,14 @@ from utils.auxiliary import make_dir, img_to_obs
 
 def main():
 
-    n_epochs = 5  # 100000
+    n_epochs = 0  # 100000
     n_processes = 1
     n_episodes_per_epoch = 1
     n_timesteps = 10
     encoding_dims = 16*7*7
     ae_sparse_lambda = 0  # 1e-3
     ae_learning_rate = 1e-3
-    reward_c = 1 # reward = reward_c * (Lt - Lt+1)
+    reward_c = 1  # reward = reward_c * (Lt - Lt+1)
     min_texture_dist = 50   # cm
     max_texture_dist = 500  # cm
     min_camera_angle = 0
